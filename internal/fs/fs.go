@@ -1357,6 +1357,12 @@ func (fs *fileSystem) LookUpInode(
 		return err
 	}
 
+	// If list cache is enabled, directory entries returned by ReadDir may be cached.
+	// So we can also cache the directory entries returned by Lookup.
+	if fs.kernelListCacheTTL > 0 {
+		e.EntryExpiration = time.Now().Add(fs.kernelListCacheTTL)
+	}
+
 	return
 }
 
